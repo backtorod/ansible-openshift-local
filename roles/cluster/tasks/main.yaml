@@ -1,0 +1,7 @@
+---
+
+- debug:
+    msg: "# cluster role"
+
+- debug:
+    msg: "provisioning openshift environment on version {{ cluster.version }}"

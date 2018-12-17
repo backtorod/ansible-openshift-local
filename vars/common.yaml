@@ -1,0 +1,22 @@
+---
+
+cluster_root: "{{ lookup('env','HOME') }}/.openshift"
+cluster_bin: "{{ cluster_root }}/bin"
+
+cluster:
+  state:
+    config: "{{ cluster_root }}/config"
+    data: "{{ cluster_root }}/data"
+    pv: "{{ cluster_root }}/pv"
+    volumes: "{{ cluster_root }}/volumes"
+  enable:
+    logging: true
+    metrics: true
+    service_catalog: true
+  image_streams: centos7
+  routing_suffix: 127.0.0.1.nip.io
+  use_existing_config: true  
+  version: v3.6.0
+
+oc:
+  tar: https://github.com/openshift/origin/releases/download/v3.6.0/openshift-origin-client-tools-v3.6.0-c4dd4cf-linux-64bit.tar.gz

@@ -1,0 +1,14 @@
+---
+
+- name: "LOCAL OPENSHIFT ENVIRONMENT"
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars_files:
+    - vars/common.yaml
+ 
+  tasks:
+
+    - include_role:
+        name: cluster
+      when: enable_cluster|default(false)|bool
