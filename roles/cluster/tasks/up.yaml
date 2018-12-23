@@ -1,0 +1,18 @@
+---
+
+- debug:
+    msg: "# cluster up"
+
+- shell: |
+    {{ oc.binary }} cluster up \
+    --host-config-dir={{ cluster.state.config }} \
+    --host-data-dir={{ cluster.state.data }} \
+    --host-pv-dir={{ cluster.state.pv }} \
+    --host-volumes-dir={{ cluster.state.volumes }} \
+    --image-streams={{ cluster.image_streams }} \
+    --logging={{ cluster.enable.logging }} \
+    --metrics={{ cluster.enable.metrics }} \
+    --routing-suffix={{ cluster.routing_suffix }} \
+    --service-catalog={{ cluster.enable.service_catalog }} \
+    --use-existing-config={{ cluster.use_existing_config }} \
+    --version={{ cluster.version }}

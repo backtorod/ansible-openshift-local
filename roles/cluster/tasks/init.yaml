@@ -1,0 +1,16 @@
+---
+
+- name: prepare state directories
+  file:
+    path: "{{ item.value }}"
+    state: directory
+  with_dict: "{{ cluster.state }}"
+
+- name: fetch oc binary
+  get_url:
+    url: "{{ oc.tar }}"
+    dest: "/tmp"
+
+- name: install
+  shell: |
+    tar -C {{ cluster_root }} -xvf /tmp/openshift-origin-client-tools-v3.6.0-c4dd4cf-linux-64bit.tar.gz --strip 1

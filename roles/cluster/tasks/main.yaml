@@ -1,7 +1,8 @@
 ---
 
 - debug:
-    msg: "# cluster role"
-
-- debug:
     msg: "provisioning openshift environment on version {{ cluster.version }}"
+
+- include_tasks: init.yaml
+
+- include_tasks: up.yaml
