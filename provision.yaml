@@ -9,6 +9,46 @@
  
   tasks:
 
-    - include_role:
-        name: cluster
-      when: enable_cluster|default(false)|bool
+    - block:
+
+        - debug:
+            msg: "Initialize requirements!"
+
+        - include_role:
+            name: cluster
+            tasks_from: init.yaml
+      
+      when: (cluster_up is defined and cluster_up) or (cluster_down is defined and cluster_down)
+
+    - block:
+
+        - debug:
+            msg: "Provisoning OpenShift cluster environment!"
+
+        - include_role:
+            name: cluster
+            tasks_from: up.yaml
+
+      when: cluster_up|default(false)|bool
+
+    - block:
+
+        - debug:
+            msg: "Stopping OpenShift cluster environment!"
+
+        - include_role:
+            name: cluster
+            tasks_from: down.yaml
+
+      when: cluster_down|default(false)|bool
+
+    - block:
+
+        - debug:
+            msg: "Tear Down OpenShift cluster environment!"
+
+        - include_role:
+            name: cluster
+            tasks_from: reset.yaml
+
+      when: cluster_reset|default(false)|bool

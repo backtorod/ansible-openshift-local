@@ -1,18 +1,49 @@
 ---
 
-- debug:
-    msg: "# cluster up"
+- name: check if cluster is already provisioned
+  stat:
+    path: "{{ cluster.state.config }}"
+  register: cluster_state
 
-- shell: |
-    {{ oc.binary }} cluster up \
-    --host-config-dir={{ cluster.state.config }} \
-    --host-data-dir={{ cluster.state.data }} \
-    --host-pv-dir={{ cluster.state.pv }} \
-    --host-volumes-dir={{ cluster.state.volumes }} \
-    --image-streams={{ cluster.image_streams }} \
-    --logging={{ cluster.enable.logging }} \
-    --metrics={{ cluster.enable.metrics }} \
-    --routing-suffix={{ cluster.routing_suffix }} \
-    --service-catalog={{ cluster.enable.service_catalog }} \
-    --use-existing-config={{ cluster.use_existing_config }} \
-    --version={{ cluster.version }}
+- block:
+
+    - name: start cluster with existing configuration
+      shell: |
+        {{ oc.binary }} cluster up \
+        --host-config-dir={{ cluster.state.config }} \
+        --host-data-dir={{ cluster.state.data }} \
+        --host-pv-dir={{ cluster.state.pv }} \
+        --host-volumes-dir={{ cluster.state.volumes }} \
+        --use-existing-config={{ cluster.use_existing_config }} \
+        --version={{ cluster.version }}
+      register: cluster_up
+
+  when: cluster_state.stat.isdir is defined and cluster_state.stat.isdir
+
+- block:
+
+    - name: provision new cluster
+      shell: |
+        {{ oc.binary }} cluster up \
+        --host-config-dir={{ cluster.state.config }} \
+        --host-data-dir={{ cluster.state.data }} \
+        --host-pv-dir={{ cluster.state.pv }} \
+        --host-volumes-dir={{ cluster.state.volumes }} \
+        --image-streams={{ cluster.image_streams }} \
+        --logging={{ cluster.enable.logging }} \
+        --metrics={{ cluster.enable.metrics }} \
+        --routing-suffix={{ cluster.routing_suffix }} \
+        --service-catalog={{ cluster.enable.service_catalog }} \
+        --use-existing-config={{ cluster.use_existing_config }} \
+        --version={{ cluster.version }}
+      register: cluster_up
+
+    - name: apply cluster admin permissions
+      shell: |
+        {{ oc.binary }} login -u system:admin
+        {{ oc.binary }} adm policy add-cluster-role-to-group system:openshift:templateservicebroker-client system:unauthenticated system:authenticated
+        {{ oc.binary }} adm policy add-cluster-role-to-user cluster-admin admin
+
+  when: cluster_state.stat.isdir is not defined
+
+- debug: var=cluster_up

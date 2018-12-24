@@ -1,0 +1,43 @@
+---
+
+- name: check if cluster is already provisioned
+  stat:
+    path: "{{ cluster.state.config }}"
+  register: cluster_state
+
+- block:
+
+    - name: stopping cluster
+      shell: |
+        {{ oc.binary }} cluster down
+      register: cluster_down
+
+    - block: 
+
+      - name: check of existing cluster containers
+        shell: |
+          docker ps -a | awk '/openshift/ { print $1 }'
+        register: container_status
+        failed_when: container_status.rc > 0
+
+      - name: removing cluster containers
+        become: true
+        shell: |
+          docker rm -f {{ item }}
+        with_items: "{{ container_status.stdout_lines }}"
+        when: container_status.rc == 0 and container_status.stdout_lines != ""
+
+    - name: removing stale mounts
+      become: true
+      shell: |
+        for i in $(mount | grep openshift | awk '{ print $3}'); do umount "$i"; done
+
+    - name: resetting cluster state
+      become: true
+      file:
+        path: "{{ item.value }}"
+        state: absent
+      with_dict:
+        - "{{ cluster.state }}"
+
+  when: cluster_state.stat.isdir is defined and cluster_state.stat.isdir
