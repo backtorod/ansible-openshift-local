@@ -5,6 +5,7 @@
     path: "{{ item.value }}"
     state: directory
   with_dict: "{{ cluster.state }}"
+  when: cluster_up is defined and cluster_up
 
 - name: fetch oc binary
   get_url:

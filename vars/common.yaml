@@ -4,6 +4,7 @@ cluster_root: "{{ lookup('env','HOME') }}/.openshift"
 cluster_bin: "{{ cluster_root }}/bin"
 
 cluster:
+  
   state:
     config: "{{ cluster_root }}/config"
     data: "{{ cluster_root }}/data"
@@ -17,6 +18,8 @@ cluster:
   routing_suffix: 127.0.0.1.nip.io
   use_existing_config: true  
   version: v3.6.0
+
+cluster_state_file: "{{ cluster.state.config }}/master/master-config.yaml"
 
 oc:
   binary: "{{ cluster_root }}/oc"

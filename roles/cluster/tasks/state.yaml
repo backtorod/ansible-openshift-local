@@ -1,0 +1,6 @@
+---
+
+- name: check if cluster is already provisioned
+  stat:
+    path: "{{ cluster_state_file }}"
+  register: cluster_state

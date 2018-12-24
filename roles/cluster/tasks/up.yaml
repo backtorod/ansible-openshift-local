@@ -1,9 +1,6 @@
 ---
 
-- name: check if cluster is already provisioned
-  stat:
-    path: "{{ cluster.state.config }}"
-  register: cluster_state
+- include_tasks: state.yaml
 
 - block:
 
@@ -18,7 +15,7 @@
         --version={{ cluster.version }}
       register: cluster_result
 
-  when: cluster_state.stat.isdir is defined and cluster_state.stat.isdir
+  when: cluster_state.stat.exists
 
 - block:
 
@@ -44,7 +41,7 @@
         {{ oc.binary }} adm policy add-cluster-role-to-group system:openshift:templateservicebroker-client system:unauthenticated system:authenticated
         {{ oc.binary }} adm policy add-cluster-role-to-user cluster-admin admin
 
-  when: cluster_state.stat.isdir is not defined
-
+  when: not cluster_state.stat.exists
+  
 - debug:
     msg: "{{ cluster_result.stdout }}"

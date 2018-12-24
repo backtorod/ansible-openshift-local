@@ -1,9 +1,6 @@
 ---
 
-- name: check if cluster is already provisioned
-  stat:
-    path: "{{ cluster.state.config }}"
-  register: cluster_state
+- include_tasks: state.yaml
 
 - block:
 
@@ -12,4 +9,4 @@
         {{ oc.binary }} cluster down
       register: cluster_down
 
-  when: cluster_state.stat.isdir is defined and cluster_state.stat.isdir
+  when: cluster_state.stat.exists
