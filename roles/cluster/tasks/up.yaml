@@ -16,7 +16,7 @@
         --host-volumes-dir={{ cluster.state.volumes }} \
         --use-existing-config={{ cluster.use_existing_config }} \
         --version={{ cluster.version }}
-      register: cluster_up
+      register: cluster_result
 
   when: cluster_state.stat.isdir is defined and cluster_state.stat.isdir
 
@@ -36,7 +36,7 @@
         --service-catalog={{ cluster.enable.service_catalog }} \
         --use-existing-config={{ cluster.use_existing_config }} \
         --version={{ cluster.version }}
-      register: cluster_up
+      register: cluster_result
 
     - name: apply cluster admin permissions
       shell: |
@@ -46,4 +46,5 @@
 
   when: cluster_state.stat.isdir is not defined
 
-- debug: var=cluster_up
+- debug:
+    msg: "{{ cluster_result.stdout }}"
