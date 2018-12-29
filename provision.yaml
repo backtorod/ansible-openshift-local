@@ -1,9 +1,8 @@
 ---
 
 - name: "LOCAL OPENSHIFT ENVIRONMENT"
-  hosts: localhost
-  connection: local
-  gather_facts: false
+  hosts: "{{ cluster_inventory|default('localhost')|string }}"
+  gather_facts: true
   vars_files:
     - vars/common.yaml
  

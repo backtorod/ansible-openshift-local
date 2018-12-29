@@ -15,3 +15,15 @@
 - name: install
   shell: |
     tar -C {{ cluster_root }} -xvf /tmp/openshift-origin-client-tools-v3.6.0-c4dd4cf-linux-64bit.tar.gz --strip 1
+
+- name: setup docker daemon with insecure registry requirements
+  become: true
+  template:
+    src: daemon.json.j2
+    dest: /etc/docker/daemon.json
+
+- name: restart docker
+  become: true
+  service: 
+    name: docker
+    state: restarted

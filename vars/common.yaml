@@ -1,6 +1,6 @@
 ---
 
-cluster_root: "{{ lookup('env','HOME') }}/.openshift"
+cluster_root: "{{ ansible_facts['env']['HOME'] }}/.openshift"
 cluster_bin: "{{ cluster_root }}/bin"
 
 cluster:
@@ -15,7 +15,8 @@ cluster:
     metrics: true
     service_catalog: true
   image_streams: centos7
-  routing_suffix: 127.0.0.1.nip.io
+  public_hostname: "{{ cluster_public_hostname|default('127.0.0.1.nip.io')|string }}" 
+  routing_suffix: "{{ cluster_routing_suffix|default('127.0.0.1.nip.io')|string }}"
   use_existing_config: true  
   version: v3.6.0
 

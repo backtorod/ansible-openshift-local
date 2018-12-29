@@ -29,6 +29,7 @@
         --image-streams={{ cluster.image_streams }} \
         --logging={{ cluster.enable.logging }} \
         --metrics={{ cluster.enable.metrics }} \
+        --public-hostname={{ cluster.public_hostname }} \
         --routing-suffix={{ cluster.routing_suffix }} \
         --service-catalog={{ cluster.enable.service_catalog }} \
         --use-existing-config={{ cluster.use_existing_config }} \
